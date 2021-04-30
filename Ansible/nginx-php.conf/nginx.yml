@@ -1,0 +1,68 @@
+---
+- name: NGINX
+  become: true
+  remote_user: fabio.lima
+  gather_facts: no
+  become_method: sudo
+  hosts: all
+
+  pre_tasks:
+    - name: 'install python2'
+      raw: sudo apt-get -y install python-simplejson
+
+  tasks:
+    - name: Install nginx
+      apt: pkg={{item}} state=installed
+      with_items:
+        - nginx
+    
+    - name: Add user
+      user:
+        name: deployer
+        groups: www-data
+        append: yes
+        shell: /bin/bash
+
+    - name: Hostname
+      hostname:
+        name: blog-ericorocha.com.br
+
+    - name: Copiando sites-available
+      copy:
+        src: /home/fabio_lima/Documentos/infra-2.0/infra-aws-blog-erico-prod/Ansible/nginx/default
+        dest: /etc/nginx/sites-available
+        owner: root
+        group: www-data
+        mode: 0644
+    
+    - name: Copiando Certificados SSL
+      copy:
+        src: /home/fabio_lima/Documentos/infra-2.0/infra-aws-blog-erico-prod/Ansible/nginx/ssl/ericorocha.crt
+        dest: /etc/nginx/ssl/
+        owner: root
+        group: www-data
+        mode: 0644
+    
+    - name: Copiando Certificados SSL .key
+      copy:
+        src: /home/fabio_lima/Documentos/infra-2.0/infra-aws-blog-erico-prod/Ansible/nginx/ssl/ericorocha.key
+        dest: /etc/nginx/ssl/
+        owner: root
+        group: www-data
+        mode: 0644
+      
+    - name: Copiando etc hosts
+      copy:
+          src: /home/fabio_lima/Documentos/infra-2.0/infra-aws-blog-erico-prod/Ansible/nginx/etc-hosts/hosts
+          dest: /etc/
+          owner: root
+          group: www-data
+          mode: 0644
+
+    - name: Copiando arquivo wp-config.php
+      copy:
+          src: /home/fabio_lima/Documentos/infra-2.0/infra-aws-blog-erico-prod/Ansible/nginx/wp-config.php
+          dest: /var/www/html/ericorocha_blog/
+          owner: deployer
+          group: www-data
+          mode: 0740

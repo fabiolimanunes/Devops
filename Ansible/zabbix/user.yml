@@ -1,0 +1,31 @@
+---
+- name: Crate Users
+  become: true
+  remote_user: fabio.lima
+  become_method: sudo
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Add user
+      user:
+        name: deployer
+        comment: "Deployer"
+        uid: 1041
+        group: zabbix
+
+    - name: Make sure we have a 'wheel' group
+      group:
+        name: wheel
+        state: present
+
+    - name: Allow 'wheel' group to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: Add sudoers users to wheel group
+      user: name=zabbix groups=wheel append=yes state=present createhome=yes

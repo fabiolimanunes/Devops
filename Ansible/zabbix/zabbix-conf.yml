@@ -1,0 +1,30 @@
+---
+    - name: ZABBIX CONF
+      become: true
+      remote_user: fabio.lima
+      gather_facts: no
+      become_method: sudo
+      hosts: all
+    
+      pre_tasks:
+        - name: 'install python2'
+          raw: sudo apt-get -y install python-simplejson
+    
+      tasks:
+            
+        - name: Copiando zabbix server .conf
+          copy:
+            src: /home/fabio_lima/Documentos/infra-2.0/infra-stag-monitoramento/Ansible/zabbix/zabbix_server.conf
+            dest: /etc/zabbix/
+            owner: root
+            group: root
+            mode: 0640
+
+        - name: Copiando apache.conf
+          copy:
+            src: /home/fabio_lima/Documentos/infra-2.0/infra-stag-monitoramento/Ansible/zabbix/apache.conf
+            dest: /etc/zabbix/
+            owner: root
+            group: root
+            mode: 0640
+

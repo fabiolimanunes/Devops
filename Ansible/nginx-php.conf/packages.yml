@@ -1,0 +1,44 @@
+---
+- name: Install packages
+  become: true
+  remote_user: fabio.lima
+  become_method: sudo
+  gather_facts: no
+  hosts: all
+
+  pre_tasks:
+    - name: Update
+      raw: sudo apt-get update --fix-missing
+    - name: 'install python2'
+      raw: sudo apt-get -y install python-simplejson
+
+  tasks:
+    - name: Install packages
+      apt: pkg={{item}} state=installed
+      with_items:
+        - build-essential
+        - libssl-dev
+        - zlib1g-dev
+        - libreadline-dev
+        - libyaml-dev
+        - git-core
+        - libpq-dev
+        - libmysqlclient-dev
+        - curl
+        - vim
+        - wget
+        - unzip
+        - php7.2-fpm 
+        - php7.2-common 
+        - php7.2-mbstring 
+        - php7.2-xmlrpc 
+        - php7.2-soap 
+        - php7.2-gd 
+        - php7.2-xml 
+        - php7.2-intl 
+        - php7.2-mysql 
+        - php7.2-cli 
+        - php7.2-zip 
+        - php7.2-curl
+        - php-zip
+        - mysql-client-core-5.7

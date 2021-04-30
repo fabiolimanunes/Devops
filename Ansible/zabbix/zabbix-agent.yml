@@ -1,0 +1,41 @@
+- name: Install Zabbix
+  become: true
+  remote_user: ubuntu
+  become_method: sudo
+  gather_facts: no
+  hosts: all
+
+  pre_tasks:
+    - name: Update
+      raw: sudo apt-get update --fix-missing
+    - name: 'install python2'
+      raw: sudo apt-get -y install python-simplejson
+  tasks:
+    - name: Download Pacote .deb Zabbix
+      get_url:
+        url: https://repo.zabbix.com/zabbix/4.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_4.0-3+bionic_all.deb
+        dest: /var/opt/
+        owner: ubuntu
+        group: ubuntu
+    
+    - name: Instação Pacote .deb Zabbix 
+      apt:
+        deb: /var/opt/zabbix-release_4.0-3+bionic_all.deb   
+
+    - name: Update
+      raw: sudo apt-get update --fix-missing
+    
+    - name: Install packages
+      apt: pkg={{item}} state=installed
+      with_items:
+        - zabbix-agent
+
+    - name: Copiando zabbix_agentd.conf
+      copy:
+        src: /home/fabio_lima/Documentos/01-BKP-infra-2.0/infra-stag-monitoramento/Ansible/zabbix/zabbix_agentd.conf
+        dest: /etc/zabbix/
+        owner: zabbix
+        group: zabbix
+        mode: 0640
+
+    
