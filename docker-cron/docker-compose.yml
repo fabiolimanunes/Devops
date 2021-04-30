@@ -1,0 +1,9 @@
+version: "3"
+services:
+    cron:
+        build: cron
+        container_name: cronteste
+        volumes:
+            - /var/log/cronteste:/var/log/cronteste
+            - ./cron/cron1:/etc/crontabs/root
+            - ./scripts:/home/mundodocker
